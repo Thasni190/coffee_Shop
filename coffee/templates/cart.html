@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-center text-amber-800 mb-8">Your Cart</h2>
+
+    {% if cart_items %}
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Cart Items Section -->
+        <div class="w-full lg:w-2/3">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <div class="divide-y divide-gray-200">
+                    {% for item in cart_items %}
+                    <div class="flex flex-col md:flex-row items-center gap-4 p-4">
+                        <!-- Product Image -->
+                        <img src="{{ item.coffee.image }}" alt="{{ item.coffee.name }}" class="w-24 h-24 object-cover rounded-md border">
+
+                        <!-- Product Details -->
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-lg">{{ item.coffee.name }}</h3>
+                            <p class="text-sm text-gray-500">{{ item.coffee.description }}</p>
+                        </div>
+
+                        <!-- Quantity Controls -->
+                        <div class="flex items-center space-x-2">
+                            <button class="bg-gray-200 px-2 py-1 rounded">-</button>
+                            <span class="px-2">{{ item.quantity }}</span>
+                            <button class="bg-gray-200 px-2 py-1 rounded">+</button>
+                        </div>
+
+                        <!-- Price Info -->
+                        <div class="text-right">
+                            <p class="text-sm text-gray-500">Price</p>
+                            <p class="font-medium">${{ item.coffee.price }}</p>
+                        </div>
+
+                        <div class="text-right">
+                            <p class="text-sm text-gray-500">Total</p>
+                            <p class="font-medium">${{ item.item_total }}</p>
+                        </div>
+
+                        <!-- Remove Button -->
+                        <div>
+                            <form method="POST" action="{% url 'remove_from_cart' item.coffee.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="text-red-600 hover:text-red-800 font-semibold text-sm">
+                                    Remove
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Summary Section -->
+        <div class="w-full lg:w-1/3">
+            <div class="bg-amber-50 p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-bold mb-4">Order Summary</h3>
+                <div class="flex justify-between mb-2">
+                    <span>Subtotal</span>
+                    <span>${{ total_price }}</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span>Sales Tax (10%)</span>
+                    <span>${{ tax }}</span>
+                </div>
+                <div class="flex justify-between font-bold text-lg border-t border-gray-300 pt-2 mt-2">
+                    <span>Total</span>
+                    <span>${{ grand_total }}</span>
+                </div>
+
+                <p class="text-green-600 mt-4 text-sm">🎉 Congrats! You're eligible for Free Shipping.</p>
+
+                <button class="w-full mt-6 bg-amber-800 text-white py-2 rounded hover:bg-amber-900 transition">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-center text-gray-600">Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}
